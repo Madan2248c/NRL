@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Learning & Intelligent Assessment System</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            color: white;
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .section {
+            background: white;
+            margin: 20px 0;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .section h3 {
+            color: #34495e;
+            margin: 25px 0 15px 0;
+            font-size: 1.5em;
+        }
+
+        .code-block {
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            border-radius: 5px;
+        }
+
+        .formula {
+            background: #e8f4fd;
+            border: 2px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 8px;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .card h4 {
+            color: #495057;
+            margin-bottom: 10px;
+        }
+
+        .mermaid-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .metric {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric h4 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .metric p {
+            opacity: 0.9;
+        }
+
+        .file-structure {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .file-structure h4 {
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+
+        .terminal {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 20px 0;
+        }
+
+        .terminal .prompt {
+            color: #4ade80;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .algorithm {
+            background: #f8f9fa;
+            border: 2px solid #6c757d;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .algorithm h4 {
+            color: #495057;
+            border-bottom: 2px solid #6c757d;
+            padding-bottom: 5px;
+        }
+
+        .step {
+            margin: 10px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .step:before {
+            content: counter(step-counter);
+            counter-increment: step-counter;
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #3498db;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .algorithm {
+            counter-reset: step-counter;
+        }
+
+        .math-equation {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            border: 2px solid #dee2e6;
+        }
+
+        .variable {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .parameter {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .concept {
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .toc {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .toc h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .toc ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .toc li {
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background 0.3s ease;
+        }
+
+        .toc li:hover {
+            background: #e9ecef;
+        }
+
+        .toc a {
+            text-decoration: none;
+            color: #495057;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: white;
+            background: rgba(0,0,0,0.2);
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🧠 Personalized Learning System</h1>
+            <p>Reinforcement Learning for Intelligent Assessment & Teaching Strategies</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="toc">
+            <h3>📚 Table of Contents</h3>
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#architecture">System Architecture</a></li>
+                <li><a href="#setup">Setup & Installation</a></li>
+                <li><a href="#usage">How to Use</a></li>
+                <li><a href="#mdp">MDP Formulation</a></li>
+                <li><a href="#qlearning">Q-Learning Algorithm</a></li>
+                <li><a href="#training">Training Dynamics</a></li>
+                <li><a href="#results">Results & Analysis</a></li>
+                <li><a href="#files">File Structure</a></li>
+            </ul>
+        </div>
+
+        <section id="overview" class="section">
+            <h2>🎯 Overview</h2>
+            <p>This project implements a <strong>Reinforcement Learning (RL) based intelligent tutoring system</strong> that learns optimal teaching strategies to maximize student learning outcomes and engagement. Using <strong>Q-Learning</strong> with ε-greedy exploration, the agent learns to adaptively select questions, provide hints, and manage topic progression.</p>
+
+            <div class="highlight">
+                <strong>Key Challenges:</strong> The system must balance question difficulty, hint timing, topic progression, and session management in a realistic student learning environment.
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h4>🎓 Student Learning</h4>
+                    <p>Simulates realistic student behavior with probabilistic responses based on knowledge vs. difficulty levels.</p>
+                </div>
+                <div class="card">
+                    <h4>🤖 RL Agent</h4>
+                    <p>Q-Learning agent that learns optimal teaching policies through trial and error.</p>
+                </div>
+                <div class="card">
+                    <h4>📊 Performance Tracking</h4>
+                    <p>Comprehensive evaluation metrics including convergence analysis and success rates.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="architecture" class="section">
+            <h2>🏗️ System Architecture</h2>
+
+            <div class="mermaid-container">
+                <div class="mermaid">
+graph TB
+    subgraph "Environment<br/>student_env.py"
+        A[Student Learning<br/>Environment]
+        A1[State: knowledge,<br/>topic, difficulty,<br/>correct_streak,<br/>wrong_streak,<br/>engagement]
+        A2[Actions: Present<br/>Question/Hint/<br/>Navigation/End]
+        A3[Student Response<br/>Simulator]
+        A4[Constraint<br/>Enforcement]
+        A5[Reward<br/>Calculation]
+    end
+
+    subgraph "Agent<br/>q_agent.py"
+        B[Q-Learning<br/>Agent]
+        B1[Q-Table: Dict<br/>state → Q-values]
+        B2[ε-Greedy<br/>Policy]
+        B3[Q-Value<br/>Updates]
+        B4[Exploration/<br/>Exploitation<br/>Balance]
+    end
+
+    subgraph "Training<br/>train.py"
+        C[Training<br/>Loop]
+        C1[Episode<br/>Initialization]
+        C2[Action Selection<br/>→ Step → Update]
+        C3[ε-Decay &<br/>Progress<br/>Monitoring]
+        C4[Model<br/>Persistence]
+    end
+
+    subgraph "Visualization<br/>plot_results.py"
+        D[Results<br/>Analysis]
+        D1[Moving Average<br/>Rewards]
+        D2[Learning<br/>Curves]
+        D3[Performance<br/>Metrics]
+        D4[Convergence<br/>Analysis]
+    end
+
+    A --> B
+    B --> C
+    C --> D
+
+    subgraph "Data Flow"
+        E[(Configuration)] --> A
+        E --> B
+        E --> C
+        C --> F[(Trained<br/>Agent)]
+        C --> G[(Training<br/>History)]
+        G --> D
+    end
+
+    style A fill:#e1f5fe
+    style B fill:#f3e5f5
+    style C fill:#e8f5e8
+    style D fill:#fff3e0
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h4>🔄 Data Flow</h4>
+                    <p>Configuration → Environment → Agent → Training → Results</p>
+                </div>
+                <div class="card">
+                    <h4>📁 Modular Design</h4>
+                    <p>5 separate Python files for maintainability and clarity</p>
+                </div>
+                <div class="card">
+                    <h4>🎯 RL Components</h4>
+                    <p>MDP environment, Q-Learning agent, training loop, visualization</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="setup" class="section">
+            <h2>⚙️ Setup & Installation</h2>
+
+            <h3>Prerequisites</h3>
+            <ul>
+                <li>Python 3.8+</li>
+                <li>NumPy</li>
+                <li>Matplotlib</li>
+            </ul>
+
+            <h3>Installation Steps</h3>
+            <div class="algorithm">
+                <h4>Quick Setup</h4>
+                <div class="step">Navigate to project directory</div>
+                <div class="step">Install dependencies: <code>pip install numpy matplotlib</code></div>
+                <div class="step">Verify file structure</div>
+            </div>
+
+            <div class="file-structure">
+                <h4>📁 Project Structure</h4>
+                <pre>
+NRL/
+├── config.py          # Configuration constants
+├── student_env.py     # Learning environment
+├── q_agent.py         # Q-Learning agent
+├── train.py           # Training script
+├── plot_results.py    # Visualization
+└── README.md          # Documentation
+                </pre>
+            </div>
+        </section>
+
+        <section id="usage" class="section">
+            <h2>🚀 How to Use</h2>
+
+            <div class="grid">
+                <div class="card">
+                    <h4>🏃‍♂️ Train the Agent</h4>
+                    <div class="terminal">
+                        <div><span class="prompt">$</span> python train.py</div>
+                    </div>
+                    <p>Trains for 1000 episodes with progress monitoring</p>
+                </div>
+                <div class="card">
+                    <h4>📊 Visualize Results</h4>
+                    <div class="terminal">
+                        <div><span class="prompt">$</span> python plot_results.py</div>
+                    </div>
+                    <p>Generates performance plots and analysis</p>
+                </div>
+                <div class="card">
+                    <h4>🧪 Quick Testing</h4>
+                    <div class="terminal">
+                        <div><span class="prompt">$</span> # Modify config.py for fewer episodes</div>
+                        <div><span class="prompt">$</span> NUM_EPISODES = 50</div>
+                    </div>
+                    <p>For development and testing</p>
+                </div>
+            </div>
+
+            <div class="highlight">
+                <strong>Expected Output:</strong> Trained agent saved as <code>trained_agent.pkl</code>, training history as <code>training_rewards.pkl</code>, and visualization plots.
+            </div>
+        </section>
+
+        <section id="mdp" class="section">
+            <h2>🎲 MDP Formulation</h2>
+
+            <h3>State Space S</h3>
+            <div class="formula">
+                s = (knowledge_level, current_topic, question_difficulty, consecutive_correct, consecutive_wrong, engagement_score)
+            </div>
+
+            <table>
+                <tr>
+                    <th>Component</th>
+                    <th>Values</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>knowledge_level</td>
+                    <td>{0, 1, 2}</td>
+                    <td>Beginner, Intermediate, Advanced</td>
+                </tr>
+                <tr>
+                    <td>current_topic</td>
+                    <td>{0, 1, 2}</td>
+                    <td>Topic 1, 2, 3</td>
+                </tr>
+                <tr>
+                    <td>question_difficulty</td>
+                    <td>{0, 1, 2}</td>
+                    <td>Easy, Medium, Hard</td>
+                </tr>
+                <tr>
+                    <td>consecutive_correct</td>
+                    <td>{0, 1, 2, 3, 4, 5}</td>
+                    <td>Correct answer streak</td>
+                </tr>
+                <tr>
+                    <td>consecutive_wrong</td>
+                    <td>{0, 1, 2, 3}</td>
+                    <td>Wrong answer streak</td>
+                </tr>
+                <tr>
+                    <td>engagement_score</td>
+                    <td>{0, 1, 2}</td>
+                    <td>Low, Medium, High</td>
+                </tr>
+            </table>
+
+            <div class="formula">
+                |S| = 3 × 3 × 3 × 6 × 4 × 3 = <strong>1,944</strong> possible states
+            </div>
+
+            <h3>Action Space A</h3>
+            <table>
+                <tr>
+                    <th>Action ID</th>
+                    <th>Action Name</th>
+                    <th>Description</th>
+                </tr>
+                <tr><td>0</td><td>Present_Easy_Question</td><td>Show easy difficulty question</td></tr>
+                <tr><td>1</td><td>Present_Medium_Question</td><td>Show medium difficulty question</td></tr>
+                <tr><td>2</td><td>Present_Hard_Question</td><td>Show hard difficulty question</td></tr>
+                <tr><td>3</td><td>Give_Hint</td><td>Provide learning hint</td></tr>
+                <tr><td>4</td><td>Review_Previous_Topic</td><td>Go back to previous topic</td></tr>
+                <tr><td>5</td><td>Move_To_Next_Topic</td><td>Advance to next topic</td></tr>
+                <tr><td>6</td><td>End_Session</td><td>Terminate learning session</td></tr>
+            </table>
+
+            <h3>Reward Function R(s,a,s')</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>✅ Correct Answers</h4>
+                    <ul>
+                        <li>Hard: <strong>+10</strong></li>
+                        <li>Medium: <strong>+5</strong></li>
+                        <li>Easy: <strong>+3</strong></li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>❌ Wrong Answers</h4>
+                    <ul>
+                        <li>All wrong: <strong>-5</strong></li>
+                        <li>3 consecutive: <strong>Dropout</strong></li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>🎯 Special Events</h4>
+                    <ul>
+                        <li>Topic completion: <strong>+15</strong></li>
+                        <li>Level up: <strong>+20</strong></li>
+                        <li>Successful session: <strong>+50</strong></li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>⚠️ Penalties</h4>
+                    <ul>
+                        <li>Constraint violation: <strong>-20</strong></li>
+                        <li>Too easy question: <strong>-8</strong></li>
+                        <li>Too hard question: <strong>-12</strong></li>
+                        <li>Give hint: <strong>-3</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>State Transition Dynamics</h3>
+            <div class="formula">
+                P(correct | difficulty, knowledge) =<br>
+                <span class="parameter">0.8</span> if difficulty &lt; knowledge_level<br>
+                <span class="parameter">0.6</span> if difficulty = knowledge_level<br>
+                <span class="parameter">0.3</span> if difficulty &gt; knowledge_level
+            </div>
+        </section>
+
+        <section id="qlearning" class="section">
+            <h2>🧠 Q-Learning Algorithm</h2>
+
+            <h3>Core Update Rule</h3>
+            <div class="formula">
+                Q(s,a) ← Q(s,a) + <span class="parameter">α</span>[r + <span class="parameter">γ</span>·max<sub>a'</sub> Q(s',a') - Q(s,a)]
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h4>α (Learning Rate)</h4>
+                    <p><strong>0.1</strong> - Controls how much new information overrides old</p>
+                </div>
+                <div class="card">
+                    <h4>γ (Discount Factor)</h4>
+                    <p><strong>0.9</strong> - Importance of future rewards</p>
+                </div>
+                <div class="card">
+                    <h4>ε (Exploration)</h4>
+                    <p>Starts at <strong>1.0</strong>, decays by <strong>0.995</strong></p>
+                </div>
+            </div>
+
+            <h3>ε-Greedy Policy</h3>
+            <div class="formula">
+                action = <br>
+                <span class="concept">random</span> with probability <span class="parameter">ε</span><br>
+                <span class="concept">argmax_a Q(s,a)</span> with probability <span class="parameter">1-ε</span>
+            </div>
+
+            <h3>Q-Table Implementation</h3>
+            <div class="code-block">
+q_table: Dict[Tuple[int,int,int,int,int,int], List[float]]
+# Key: state tuple, Value: [Q(s,a₀), Q(s,a₁), ..., Q(s,a₆)]
+            </div>
+
+            <h3>Training Algorithm</h3>
+            <div class="algorithm">
+                <h4>Q-Learning Training Loop</h4>
+                <div class="step">Initialize Q-table with zeros for all state-action pairs</div>
+                <div class="step">For each episode (1 to 1000):</div>
+                <div class="step" style="padding-left: 40px;">Reset environment to initial state s₀</div>
+                <div class="step" style="padding-left: 40px;">While not done and steps < 30:</div>
+                <div class="step" style="padding-left: 60px;">Choose action a using ε-greedy policy</div>
+                <div class="step" style="padding-left: 60px;">Execute action, observe r, s'</div>
+                <div class="step" style="padding-left: 60px;">Update Q(s,a) using TD rule</div>
+                <div class="step" style="padding-left: 60px;">s ← s'</div>
+                <div class="step" style="padding-left: 40px;">Decay ε for exploration-exploitation balance</div>
+                <div class="step">Save trained agent and training history</div>
+            </div>
+        </section>
+
+        <section id="training" class="section">
+            <h2>📈 Training Dynamics</h2>
+
+            <h3>Episode Structure</h3>
+            <div class="algorithm">
+                <h4>Single Episode Flow</h4>
+                <div class="step">Initialize: knowledge=0, topic=0, engagement=1</div>
+                <div class="step">For each step (max 30):</div>
+                <div class="step" style="padding-left: 40px;">Agent selects action (ε-greedy)</div>
+                <div class="step" style="padding-left: 40px;">Environment processes action</div>
+                <div class="step" style="padding-left: 40px;">Student responds (probabilistic)</div>
+                <div class="step" style="padding-left: 40px;">Calculate reward and update state</div>
+                <div class="step" style="padding-left: 40px;">Agent updates Q-values</div>
+                <div class="step">Episode ends: success, dropout, or max steps</div>
+            </div>
+
+            <h3>Learning Progression</h3>
+            <div class="metrics">
+                <div class="metric">
+                    <h4>Early Training</h4>
+                    <p>High ε, constraint violations, negative rewards</p>
+                </div>
+                <div class="metric">
+                    <h4>Mid Training</h4>
+                    <p>Learning valid actions, improving rewards</p>
+                </div>
+                <div class="metric">
+                    <h4>Late Training</h4>
+                    <p>Optimal policy, stable positive rewards</p>
+                </div>
+            </div>
+
+            <h3>Convergence Analysis</h3>
+            <div class="highlight">
+                <strong>Convergence Indicators:</strong>
+                <ul>
+                    <li>Moving average of rewards stabilizes</li>
+                    <li>Q-table non-zero entries increase then stabilize</li>
+                    <li>Agent learns constraint satisfaction</li>
+                    <li>ε approaches minimum exploration rate</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="results" class="section">
+            <h2>📊 Results & Analysis</h2>
+
+            <h3>Expected Performance</h3>
+            <div class="metrics">
+                <div class="metric">
+                    <h4>Success Rate</h4>
+                    <h4>>80%</h4>
+                    <p>High engagement + completion</p>
+                </div>
+                <div class="metric">
+                    <h4>Average Reward</h4>
+                    <h4>+40 to +60</h4>
+                    <p>Per episode after convergence</p>
+                </div>
+                <div class="metric">
+                    <h4>Q-Table Size</h4>
+                    <h4>300-600 states</h4>
+                    <p>Visited state-action pairs</p>
+                </div>
+                <div class="metric">
+                    <h4>Convergence Time</h4>
+                    <h4>200-400 episodes</h4>
+                    <p>To reach stable performance</p>
+                </div>
+            </div>
+
+            <h3>Visualization Outputs</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>🎯 Training Rewards</h4>
+                    <p>Episode rewards with moving averages showing convergence</p>
+                </div>
+                <div class="card">
+                    <h4>📈 Learning Curves</h4>
+                    <p>Rewards and episode lengths over training</p>
+                </div>
+                <div class="card">
+                    <h4>📊 Reward Distribution</h4>
+                    <p>Histogram of episode reward distribution</p>
+                </div>
+            </div>
+
+            <h3>Learned Behaviors</h3>
+            <div class="status success">✓ Avoids constraint violations</div>
+            <div class="status success">✓ Presents appropriate difficulty questions</div>
+            <div class="status success">✓ Times hints effectively</div>
+            <div class="status success">✓ Manages topic progression optimally</div>
+            <div class="status success">✓ Ends sessions at optimal times</div>
+        </section>
+
+        <section id="files" class="section">
+            <h2>📁 File Structure & Details</h2>
+
+            <div class="grid">
+                <div class="card">
+                    <h4>⚙️ config.py</h4>
+                    <ul>
+                        <li>Hyperparameters (α, γ, ε)</li>
+                        <li>Reward values</li>
+                        <li>State/action mappings</li>
+                        <li>Probabilities</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>🎲 student_env.py</h4>
+                    <ul>
+                        <li>StudentLearningEnv class</li>
+                        <li>State management</li>
+                        <li>Reward calculation</li>
+                        <li>Student response simulation</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>🤖 q_agent.py</h4>
+                    <ul>
+                        <li>QLearningAgent class</li>
+                        <li>Q-table management</li>
+                        <li>ε-greedy policy</li>
+                        <li>Model persistence</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>🏃‍♂️ train.py</h4>
+                    <ul>
+                        <li>Training loop (1000 episodes)</li>
+                        <li>Progress monitoring</li>
+                        <li>Agent evaluation</li>
+                        <li>Data collection</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>📊 plot_results.py</h4>
+                    <ul>
+                        <li>Training visualization</li>
+                        <li>Moving averages</li>
+                        <li>Performance analysis</li>
+                        <li>Statistical summaries</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Key Classes & Methods</h3>
+            <table>
+                <tr>
+                    <th>Class</th>
+                    <th>Key Methods</th>
+                    <th>Purpose</th>
+                </tr>
+                <tr>
+                    <td>StudentLearningEnv</td>
+                    <td>reset(), step(action)</td>
+                    <td>Gym-like environment interface</td>
+                </tr>
+                <tr>
+                    <td>QLearningAgent</td>
+                    <td>choose_action(), update()</td>
+                    <td>RL agent with Q-learning</td>
+                </tr>
+                <tr>
+                    <td>-</td>
+                    <td>train_agent()</td>
+                    <td>Complete training pipeline</td>
+                </tr>
+                <tr>
+                    <td>-</td>
+                    <td>plot_training_rewards()</td>
+                    <td>Visualization functions</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="section">
+            <h2>🎯 Key Technical Insights</h2>
+
+            <div class="highlight">
+                <strong>Why Q-Learning Works Here:</strong>
+                <ul>
+                    <li><strong>Sparse Rewards:</strong> Dense reward shaping guides learning toward optimal behavior</li>
+                    <li><strong>Constraint Learning:</strong> Heavy penalties (-20) teach valid action selection</li>
+                    <li><strong>Exploration Balance:</strong> ε-decay ensures both state space coverage and exploitation</li>
+                    <li><strong>Realistic Dynamics:</strong> Probabilistic student responses prevent overfitting</li>
+                </ul>
+            </div>
+
+            <h3>Mathematical Foundations</h3>
+            <div class="math-equation">
+                <strong>Bellman Optimality Equation:</strong><br>
+                Q*(s,a) = E[r + γ·max<sub>a'</sub> Q*(s',a') | s,a]
+            </div>
+
+            <div class="math-equation">
+                <strong>Temporal Difference Learning:</strong><br>
+                Q(s,a) ← Q(s,a) + α[TD_target - Q(s,a)]<br>
+                TD_target ∈ {r + γ·Q(s',a'), r + γ·max<sub>a'</sub> Q(s',a')}
+            </div>
+
+            <h3>Computational Complexity</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>Space: O(|visited states| × |actions|)</h4>
+                    <p>≈ 500 × 7 = 3.5KB for typical runs</p>
+                </div>
+                <div class="card">
+                    <h4>Time: O(1) per update</h4>
+                    <p>Dictionary operations are fast</p>
+                </div>
+                <div class="card">
+                    <h4>Training: ~30 seconds</h4>
+                    <p>1000 episodes on modern hardware</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>🧠 Personalized Learning & Intelligent Assessment System | Built with Python, NumPy & Reinforcement Learning</p>
+            <p>© 2024 | Q-Learning for Educational Optimization</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+            fontFamily: 'arial',
+            fontSize: 14
+        });
+
+        // Smooth scrolling for TOC links
+        document.querySelectorAll('.toc a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add some interactive elements
+        document.querySelectorAll('.formula').forEach(formula => {
+            formula.addEventListener('click', function() {
+                this.style.transform = this.style.transform === 'scale(1.05)' ? 'scale(1)' : 'scale(1.05)';
+                this.style.transition = 'transform 0.3s ease';
+            });
+        });
+
+        // Highlight current section in TOC
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('.section');
+            const tocLinks = document.querySelectorAll('.toc a');
+
+            sections.forEach((section, index) => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top <= 100 && rect.bottom >= 100) {
+                    tocLinks.forEach(link => link.style.fontWeight = 'normal');
+                    tocLinks[index].style.fontWeight = 'bold';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
