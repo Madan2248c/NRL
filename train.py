@@ -5,6 +5,8 @@ This script trains a Q-Learning agent to learn optimal teaching strategies
 in the student learning environment over 1000 episodes.
 """
 
+import argparse
+import logging
 import numpy as np
 from typing import Dict
 from student_env import StudentLearningEnv
@@ -14,6 +16,7 @@ from config import (
     EPSILON_START, EPSILON_DECAY, EPSILON_MIN
 )
 import pickle
+import os
 
 
 def train_agent(save_path: str = "trained_agent.pkl", rewards_path: str = "training_rewards.pkl"):
@@ -34,10 +37,9 @@ def train_agent(save_path: str = "trained_agent.pkl", rewards_path: str = "train
         epsilon_min=EPSILON_MIN
     )
 
-    print("Starting Q-Learning training...")
-    print(f"Training for {NUM_EPISODES} episodes with max {MAX_STEPS} steps per episode")
-    print(f"Hyperparameters: α={ALPHA}, γ={GAMMA}, ε_start={EPSILON_START}, ε_decay={EPSILON_DECAY}")
-    print("=" * 60)
+    logging.info("Starting Q-Learning training...")
+    logging.info(f"Defaults: NUM_EPISODES={NUM_EPISODES}, MAX_STEPS={MAX_STEPS}, EVAL_INTERVAL={EVAL_INTERVAL}")
+    logging.info(f"Hyperparameters: α={ALPHA}, γ={GAMMA}, ε_start={EPSILON_START}, ε_decay={EPSILON_DECAY}")
 
     episode_rewards = []
     episode_lengths = []
@@ -71,32 +73,31 @@ def train_agent(save_path: str = "trained_agent.pkl", rewards_path: str = "train
         # Decay epsilon
         agent.decay_epsilon()
 
-        # Print progress every EVAL_INTERVAL episodes
+        # Log progress every EVAL_INTERVAL episodes
         if (episode + 1) % EVAL_INTERVAL == 0:
             avg_reward = np.mean(episode_rewards[-EVAL_INTERVAL:])
             avg_length = np.mean(episode_lengths[-EVAL_INTERVAL:])
             q_table_stats = agent.get_q_table_stats()
 
-            print("2d"
-                  f"Average Length: {avg_length:.1f} steps")
-            print(f"Q-Table: {q_table_stats['num_states']} states, "
-                  f"{q_table_stats['non_zero_q_values']} non-zero Q-values")
-            print(f"Epsilon: {agent.epsilon:.4f}")
-            print("-" * 40)
+            logging.info(f"Episode {episode+1}: Average Reward (last {EVAL_INTERVAL}) = {avg_reward:.2f}, "
+                         f"Average Length = {avg_length:.1f} steps")
+            logging.info(f"Q-Table: {q_table_stats['num_states']} states, "
+                         f"{q_table_stats['non_zero_q_values']} non-zero Q-values")
+            logging.info(f"Epsilon: {agent.epsilon:.4f}")
+            logging.info("-" * 40)
 
-    print("=" * 60)
-    print("Training completed!")
-    print(f"Final Q-Table: {agent.get_q_table_stats()}")
-    print(".4f")
+    logging.info("=" * 60)
+    logging.info("Training completed!")
+    logging.info(f"Final Q-Table: {agent.get_q_table_stats()}")
 
     # Save trained agent and training history
     agent.episode_rewards = episode_rewards
     agent.episode_lengths = episode_lengths
 
-    print(f"Saving trained agent to {save_path}...")
+    logging.info(f"Saving trained agent to {save_path}...")
     agent.save_q_table(save_path)
 
-    print(f"Saving training rewards to {rewards_path}...")
+    logging.info(f"Saving training rewards to {rewards_path}...")
     with open(rewards_path, 'wb') as f:
         pickle.dump({
             'episode_rewards': episode_rewards,
@@ -120,7 +121,7 @@ def evaluate_agent(agent: QLearningAgent, env: StudentLearningEnv, num_episodes:
     Returns:
         Dictionary with evaluation metrics
     """
-    print(f"Evaluating agent for {num_episodes} episodes...")
+    logging.info(f"Evaluating agent for {num_episodes} episodes...")
 
     evaluation_rewards = []
     evaluation_lengths = []
@@ -175,24 +176,47 @@ def evaluate_agent(agent: QLearningAgent, env: StudentLearningEnv, num_episodes:
         "success_rate": successful_sessions / num_episodes * 100
     }
 
-    print("Evaluation Results:")
-    print(f"Average Reward: {results['avg_reward']:.2f}")
-    print(f"Reward Std Dev: {results['std_reward']:.2f}")
-    print(f"Average Length: {results['avg_length']:.2f}")
-    print(f"Success Rate: {results['success_rate']:.1f}%")
-    print(f"Successful Sessions: {successful_sessions}/{num_episodes}")
-    print(f"Total Level-ups: {level_ups}")
-    print(f"Dropouts: {dropouts}")
+    logging.info("Evaluation Results:")
+    logging.info(f"Average Reward: {results['avg_reward']:.2f}")
+    logging.info(f"Reward Std Dev: {results['std_reward']:.2f}")
+    logging.info(f"Average Length: {results['avg_length']:.2f}")
+    logging.info(f"Success Rate: {results['success_rate']:.1f}%")
+    logging.info(f"Successful Sessions: {successful_sessions}/{num_episodes}")
+    logging.info(f"Total Level-ups: {level_ups}")
+    logging.info(f"Dropouts: {dropouts}")
 
     return results
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Train Q-Learning agent for student learning environment")
+    parser.add_argument("--episodes", type=int, default=NUM_EPISODES, help="Number of training episodes")
+    parser.add_argument("--max-steps", type=int, default=MAX_STEPS, help="Max steps per episode")
+    parser.add_argument("--eval-interval", type=int, default=EVAL_INTERVAL, help="Evaluation/log interval")
+    parser.add_argument("--save-path", type=str, default="trained_agent.pkl", help="Path to save Q-table")
+    parser.add_argument("--rewards-path", type=str, default="training_rewards.pkl", help="Path to save training rewards")
+    parser.add_argument("--eval-episodes", type=int, default=20, help="Number of evaluation episodes")
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
+    args = parse_args()
+
+    # Configure logging
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+
+    # Apply overrides from CLI by setting local constants where used
+    # Note: config.py still contains defaults; we pass args to functions where applicable
+    NUM_EPISODES = args.episodes
+    MAX_STEPS = args.max_steps
+    EVAL_INTERVAL = args.eval_interval
+
     # Train the agent
-    trained_agent, rewards, lengths = train_agent()
+    trained_agent, rewards, lengths = train_agent(save_path=args.save_path, rewards_path=args.rewards_path)
 
     # Evaluate the trained agent
     env = StudentLearningEnv()
-    eval_results = evaluate_agent(trained_agent, env, num_episodes=20)
+    eval_results = evaluate_agent(trained_agent, env, num_episodes=args.eval_episodes)
 
-    print("\nTraining and evaluation completed successfully!")
+    logging.info("\nTraining and evaluation completed successfully!")
+],
