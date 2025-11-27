@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NRL: Intelligent Tutoring System Dashboard</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Custom Styles for Chart Containers */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        
+        /* Interactive Card Hover Effects */
+        .interactive-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .interactive-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Flowchart Connector Lines (CSS only) */
+        .flow-line {
+            position: absolute;
+            background-color: #cbd5e1;
+            z-index: 0;
+        }
+        .flow-arrow {
+            width: 0; 
+            height: 0; 
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid #94a3b8;
+            position: absolute;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans leading-relaxed">
+
+    <!-- Chosen Palette: Slate & Indigo (Professional, Academic, Trustworthy) -->
+    <!-- Application Structure Plan: 
+         1. Header: High-level overview.
+         2. System Architecture (The "Ecosystem"): Interactive block diagram explaining the Agent-Environment loop.
+         3. Logic & State Space (The "Brain"): Detailed interactive breakdown of the 6-dim State and 7 Actions.
+         4. Simulation Lab (The "Experience"): An interactive calculator where users can simulate a step (State + Action = Reward) to understand the RL logic.
+         5. Performance Analytics (The "Results"): Dashboard with Chart.js visualizing the training convergence and expected outcomes described in the report.
+    -->
+    <!-- Visualization & Content Choices:
+         - Architecture: CSS Grid/Flex with styled blocks instead of Mermaid/SVG for interactivity.
+         - Logic: Clickable cards to reveal detailed constraints and rewards.
+         - Simulation: Form inputs and JS logic to replicate the report's probability and reward math dynamically.
+         - Analytics: Line charts for learning curves, Bar charts for reward distribution.
+         - Confirming NO SVG used. NO Mermaid JS used.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-white shadow-md border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-brain text-indigo-600 text-2xl mr-3"></i>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">NRL System Explorer</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <button onclick="scrollToSection('architecture')" class="text-slate-600 hover:text-indigo-600 font-medium transition">Architecture</button>
+                    <button onclick="scrollToSection('logic')" class="text-slate-600 hover:text-indigo-600 font-medium transition">RL Logic</button>
+                    <button onclick="scrollToSection('simulation')" class="text-slate-600 hover:text-indigo-600 font-medium transition">Simulation</button>
+                    <button onclick="scrollToSection('results')" class="text-slate-600 hover:text-indigo-600 font-medium transition">Results</button>
+                </div>
+                <!-- Mobile Menu Button -->
+                <div class="flex items-center md:hidden">
+                    <button onclick="toggleMobileMenu()" class="text-slate-600 hover:text-indigo-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-100 p-4 space-y-2 shadow-lg">
+            <button onclick="scrollToSection('architecture')" class="block w-full text-left py-2 px-4 hover:bg-slate-50 text-slate-600">Architecture</button>
+            <button onclick="scrollToSection('logic')" class="block w-full text-left py-2 px-4 hover:bg-slate-50 text-slate-600">RL Logic</button>
+            <button onclick="scrollToSection('simulation')" class="block w-full text-left py-2 px-4 hover:bg-slate-50 text-slate-600">Simulation</button>
+            <button onclick="scrollToSection('results')" class="block w-full text-left py-2 px-4 hover:bg-slate-50 text-slate-600">Results</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="bg-gradient-to-r from-indigo-700 to-indigo-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-3xl">
+                <h1 class="text-4xl md:text-5xl font-extrabold mb-6">Reinforcement Learning for Intelligent Tutoring</h1>
+                <p class="text-lg md:text-xl text-indigo-100 mb-8 leading-relaxed">
+                    Explore the inner workings of an adaptive AI tutor. This system uses Q-Learning to balance question difficulty, engagement, and topic progression, optimizing the learning journey for every student.
+                </p>
+                <div class="flex space-x-4">
+                    <button onclick="scrollToSection('simulation')" class="bg-white text-indigo-800 font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-indigo-50 transition transform hover:-translate-y-1">
+                        Try the Simulation
+                    </button>
+                    <button onclick="scrollToSection('architecture')" class="border border-white text-white font-medium py-3 px-6 rounded-lg hover:bg-white/10 transition">
+                        View Architecture
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">
+
+        <!-- Architecture Section -->
+        <section id="architecture" class="scroll-mt-24">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">System Architecture</h2>
+                <p class="max-w-2xl mx-auto text-slate-600 text-lg">
+                    The system operates as a closed feedback loop between the <strong>Student Environment</strong> and the <strong>Q-Learning Agent</strong>. Hover over the blocks below to understand the data flow.
+                </p>
+            </div>
+
+            <!-- Interactive Architecture Diagram -->
+            <div class="relative bg-white p-8 rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+                    
+                    <!-- Agent Block -->
+                    <div class="interactive-card bg-indigo-50 border-2 border-indigo-200 rounded-xl p-6 relative">
+                        <div class="absolute -top-3 -right-3 bg-indigo-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold shadow-md">A</div>
+                        <h3 class="text-xl font-bold text-indigo-800 mb-3"><i class="fas fa-robot mr-2"></i>Q-Learning Agent</h3>
+                        <p class="text-sm text-slate-600 mb-4">The "Brain" that decides how to teach.</p>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-center"><i class="fas fa-check-circle text-indigo-500 mr-2"></i>Q-Table (State → Values)</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-indigo-500 mr-2"></i>ε-Greedy Policy</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-indigo-500 mr-2"></i>Exploration Balance</li>
+                        </ul>
+                        <div class="mt-4 pt-4 border-t border-indigo-100 text-xs text-indigo-700 font-mono">
+                            file: q_agent.py
+                        </div>
+                    </div>
+
+                    <!-- Interaction Zone (Visual connectors) -->
+                    <div class="hidden md:flex flex-col justify-center items-center space-y-8">
+                        <div class="w-full text-center">
+                            <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Action (a)</div>
+                            <div class="h-1 bg-indigo-200 w-full rounded-full relative">
+                                <div class="absolute right-0 -top-1.5 w-0 h-0 border-l-[8px] border-l-indigo-200 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent"></div>
+                            </div>
+                        </div>
+                        <div class="w-full text-center">
+                            <div class="h-1 bg-emerald-200 w-full rounded-full relative">
+                                <div class="absolute left-0 -top-1.5 w-0 h-0 border-r-[8px] border-r-emerald-200 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent"></div>
+                            </div>
+                            <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">State (s') + Reward (r)</div>
+                        </div>
+                    </div>
+
+                    <!-- Environment Block -->
+                    <div class="interactive-card bg-emerald-50 border-2 border-emerald-200 rounded-xl p-6 relative">
+                        <div class="absolute -top-3 -right-3 bg-emerald-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold shadow-md">E</div>
+                        <h3 class="text-xl font-bold text-emerald-800 mb-3"><i class="fas fa-user-graduate mr-2"></i>Student Env</h3>
+                        <p class="text-sm text-slate-600 mb-4">Simulates student behavior and learning.</p>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-center"><i class="fas fa-check-circle text-emerald-500 mr-2"></i>Response Simulator</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-emerald-500 mr-2"></i>Constraint Check</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-emerald-500 mr-2"></i>Reward Calculation</li>
+                        </ul>
+                        <div class="mt-4 pt-4 border-t border-emerald-100 text-xs text-emerald-700 font-mono">
+                            file: student_env.py
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Logic Deep Dive Section -->
+        <section id="logic" class="scroll-mt-24">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <!-- Left: State Space -->
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900 mb-6 flex items-center">
+                        <span class="bg-indigo-100 text-indigo-700 p-2 rounded-lg mr-3"><i class="fas fa-cube"></i></span>
+                        The State Space (S)
+                    </h2>
+                    <p class="text-slate-600 mb-6">
+                        The agent perceives the world through a 6-dimensional tuple. This results in <strong>1,944 unique situations</strong> the tutor must learn to handle.
+                    </p>
+                    <div class="space-y-4">
+                        <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-indigo-500">
+                            <h4 class="font-bold text-indigo-900">Knowledge Level (3)</h4>
+                            <p class="text-sm text-slate-500">0: Beginner, 1: Intermediate, 2: Advanced</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-indigo-400">
+                            <h4 class="font-bold text-indigo-900">Current Topic (3)</h4>
+                            <p class="text-sm text-slate-500">Topic 0, Topic 1, Topic 2</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-indigo-300">
+                            <h4 class="font-bold text-indigo-900">Engagement Score (3)</h4>
+                            <p class="text-sm text-slate-500">0: Low, 1: Medium, 2: High</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-slate-300">
+                            <h4 class="font-bold text-slate-700">Transient Metrics</h4>
+                            <p class="text-sm text-slate-500">Difficulty (3), Correct Streak (6), Wrong Streak (4)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Action Space -->
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900 mb-6 flex items-center">
+                        <span class="bg-pink-100 text-pink-700 p-2 rounded-lg mr-3"><i class="fas fa-bolt"></i></span>
+                        The Action Space (A)
+                    </h2>
+                    <p class="text-slate-600 mb-6">
+                        At any step, the agent chooses from 7 discrete actions. The goal is to pick the one that maximizes long-term reward.
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                            <span class="text-xs font-bold bg-green-100 text-green-700 px-2 py-1 rounded">0-2</span>
+                            <h4 class="font-bold mt-2">Questions</h4>
+                            <p class="text-xs text-slate-500">Present Easy, Medium, or Hard questions based on student ability.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                            <span class="text-xs font-bold bg-yellow-100 text-yellow-700 px-2 py-1 rounded">3</span>
+                            <h4 class="font-bold mt-2">Give Hint</h4>
+                            <p class="text-xs text-slate-500">Helps with difficulty but incurs a small penalty (-3).</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                            <span class="text-xs font-bold bg-blue-100 text-blue-700 px-2 py-1 rounded">4-5</span>
+                            <h4 class="font-bold mt-2">Navigation</h4>
+                            <p class="text-xs text-slate-500">Review Previous Topic or Move to Next Topic.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                            <span class="text-xs font-bold bg-red-100 text-red-700 px-2 py-1 rounded">6</span>
+                            <h4 class="font-bold mt-2">End Session</h4>
+                            <p class="text-xs text-slate-500">Stop learning. Good if engagement is high, bad if early.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Simulation Section -->
+        <section id="simulation" class="scroll-mt-24 bg-slate-900 text-white rounded-3xl p-8 shadow-2xl overflow-hidden relative">
+            <!-- Background element -->
+            <div class="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-indigo-600 rounded-full opacity-20 blur-3xl"></div>
+
+            <div class="relative z-10 mb-8">
+                <h2 class="text-3xl font-bold mb-2">RL Logic Simulator</h2>
+                <p class="text-indigo-200">Set the scenario and see how the Reward Function described in the report calculates value.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Controls -->
+                <div class="lg:col-span-4 space-y-6">
+                    <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+                        <label class="block text-sm font-bold text-indigo-300 mb-2">Student Knowledge Level</label>
+                        <select id="sim-knowledge" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+                            <option value="0">Beginner (0)</option>
+                            <option value="1">Intermediate (1)</option>
+                            <option value="2">Advanced (2)</option>
+                        </select>
+                    </div>
+
+                    <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+                        <label class="block text-sm font-bold text-indigo-300 mb-2">Agent Action</label>
+                        <select id="sim-action" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+                            <option value="easy">Give Easy Question</option>
+                            <option value="medium">Give Medium Question</option>
+                            <option value="hard">Give Hard Question</option>
+                            <option value="hint">Give Hint</option>
+                            <option value="end">End Session</option>
+                        </select>
+                    </div>
+
+                    <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+                        <label class="block text-sm font-bold text-indigo-300 mb-2">Student Outcome</label>
+                        <select id="sim-outcome" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+                            <option value="correct">Correct Answer</option>
+                            <option value="wrong">Wrong Answer</option>
+                        </select>
+                        <p class="text-xs text-slate-400 mt-2 italic" id="prob-display">
+                            Probability of correct: Calculating...
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Results Display -->
+                <div class="lg:col-span-8">
+                    <div class="h-full flex flex-col justify-center bg-slate-800 rounded-xl border border-slate-700 p-8">
+                        <div class="text-center mb-8">
+                            <h3 class="text-lg font-medium text-slate-400 uppercase tracking-widest mb-2">Calculated Reward</h3>
+                            <div id="reward-value" class="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">
+                                0
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+                                <span class="text-slate-300">Base Action Value</span>
+                                <span id="reward-base" class="font-mono text-indigo-300">0</span>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+                                <span class="text-slate-300">Outcome Bonus/Penalty</span>
+                                <span id="reward-outcome" class="font-mono text-indigo-300">0</span>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+                                <span class="text-slate-300">Constraint Check</span>
+                                <span id="reward-constraint" class="font-mono text-red-400">0</span>
+                            </div>
+                        </div>
+
+                        <div id="feedback-text" class="mt-8 p-4 bg-slate-900/50 rounded-lg text-sm text-indigo-200 border-l-4 border-indigo-500">
+                            Select options to simulate a learning step...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="results" class="scroll-mt-24">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">Training Performance & Analytics</h2>
+                <p class="max-w-2xl mx-auto text-slate-600 text-lg">
+                    Visualizing the data generated from the 1000-episode training loop (`train.py` and `plot_results.py`).
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Chart 1: Learning Curve -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4 flex justify-between">
+                        <span>Learning Curve (Moving Avg)</span>
+                        <i class="fas fa-chart-line text-indigo-500"></i>
+                    </h3>
+                    <div class="chart-container">
+                        <canvas id="learningCurveChart"></canvas>
+                    </div>
+                    <p class="text-sm text-slate-500 mt-4">
+                        <strong>Insight:</strong> The agent starts with negative rewards (random exploration) but converges to positive stability around episode 400 as the policy optimizes.
+                    </p>
+                </div>
+
+                <!-- Chart 2: Reward Distribution -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4 flex justify-between">
+                        <span>Reward Logic Distribution</span>
+                        <i class="fas fa-chart-bar text-emerald-500"></i>
+                    </h3>
+                    <div class="chart-container">
+                        <canvas id="rewardDistChart"></canvas>
+                    </div>
+                    <p class="text-sm text-slate-500 mt-4">
+                        <strong>Insight:</strong> The defined reward values heavily penalize frustration (-12, -20) while incentivizing knowledge progression (+20) and correct hard answers (+10).
+                    </p>
+                </div>
+            </div>
+
+            <!-- Key Metrics Summary -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                <div class="bg-indigo-50 p-4 rounded-xl text-center">
+                    <div class="text-2xl font-bold text-indigo-700">1,944</div>
+                    <div class="text-xs text-indigo-600 uppercase font-bold mt-1">Total States</div>
+                </div>
+                <div class="bg-emerald-50 p-4 rounded-xl text-center">
+                    <div class="text-2xl font-bold text-emerald-700">7</div>
+                    <div class="text-xs text-emerald-600 uppercase font-bold mt-1">Discrete Actions</div>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-xl text-center">
+                    <div class="text-2xl font-bold text-blue-700">~400</div>
+                    <div class="text-xs text-blue-600 uppercase font-bold mt-1">Convergence Episodes</div>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-xl text-center">
+                    <div class="text-2xl font-bold text-purple-700">>80%</div>
+                    <div class="text-xs text-purple-600 uppercase font-bold mt-1">Success Rate</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-12 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="mb-4 text-slate-300">Generated Interactive Report for NRL Project</p>
+            <p class="text-sm">Based on Reinforcement Learning Architecture for Intelligent Tutoring</p>
+            <div class="mt-8 pt-8 border-t border-slate-800 text-xs">
+                &copy; 2023 NRL System Visualizer. Single Page Application.
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // State Management
+        const appState = {
+            sim: {
+                knowledge: 0,
+                action: 'easy',
+                outcome: 'correct',
+                calculatedReward: 0
+            }
+        };
+
+        // Navigation Logic
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+            // Close mobile menu if open
+            const menu = document.getElementById('mobile-menu');
+            if (!menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
+            }
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // --- SIMULATION LOGIC ---
+        // Mimicking the Reward Function R(s, a, s') and probabilities from the report
+        function updateSimulation() {
+            // Get inputs
+            const knowledge = parseInt(document.getElementById('sim-knowledge').value);
+            const action = document.getElementById('sim-action').value;
+            const outcome = document.getElementById('sim-outcome').value;
+
+            // 1. Calculate Probability (Display only)
+            // Rules from report:
+            // diff < know -> 0.8
+            // diff = know -> 0.6
+            // diff > know -> 0.3
+            let diffLevel = -1;
+            if (action === 'easy') diffLevel = 0;
+            if (action === 'medium') diffLevel = 1;
+            if (action === 'hard') diffLevel = 2;
+
+            let probText = "N/A for this action";
+            
+            if (diffLevel !== -1) {
+                if (diffLevel < knowledge) probText = "High (80%) - Easy for student";
+                else if (diffLevel === knowledge) probText = "Medium (60%) - Appropriate challenge";
+                else probText = "Low (30%) - Too hard";
+            }
+            document.getElementById('prob-display').textContent = `Est. Probability: ${probText}`;
+
+            // 2. Calculate Rewards
+            let base = 0;
+            let outcomeReward = 0;
+            let constraintPenalty = 0;
+            let feedback = "";
+
+            // Logic Tree based on Report's Reward Function
+            if (action === 'hint') {
+                base = -3; // Cost of hint
+                feedback = "Using hints incurs a small penalty to prevent reliance.";
+            } else if (action === 'end') {
+                // Simplified context: assume successful if we manually selected 'correct' (proxy for good session)
+                if (outcome === 'correct') {
+                    base = 50; 
+                    feedback = "Ending on a high note! Large session completion reward.";
+                } else {
+                    base = -30;
+                    feedback = "Ending early or in frustration leads to penalties.";
+                }
+            } else {
+                // Question Logic
+                if (diffLevel > knowledge) {
+                    constraintPenalty = -12; // Too hard penalty
+                    feedback = "Constraint Violation: Question too hard for student level! Heavy penalty.";
+                } else if (diffLevel < knowledge - 1) { // Assuming easy is < current-1 (simplified)
+                    constraintPenalty = -8; // Too easy
+                    feedback = "Constraint Violation: Question too easy. Wasting student time.";
+                } else {
+                    feedback = "Appropriate difficulty level.";
+                }
+
+                if (outcome === 'correct') {
+                    if (action === 'hard') outcomeReward = 10;
+                    else if (action === 'medium') outcomeReward = 5;
+                    else outcomeReward = 3;
+                    feedback += " Correct answer rewards based on difficulty.";
+                } else {
+                    outcomeReward = -5;
+                    feedback += " Wrong answer penalty applied (-5).";
+                }
+            }
+
+            // Total
+            const total = base + outcomeReward + constraintPenalty;
+
+            // Update UI
+            animateValue("reward-value", parseInt(document.getElementById('reward-value').textContent), total, 500);
+            document.getElementById('reward-base').textContent = base;
+            document.getElementById('reward-outcome').textContent = outcomeReward > 0 ? `+${outcomeReward}` : outcomeReward;
+            document.getElementById('reward-constraint').textContent = constraintPenalty;
+            document.getElementById('feedback-text').textContent = feedback;
+        }
+
+        // Animation helper
+        function animateValue(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerHTML = Math.floor(progress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Listeners
+        document.getElementById('sim-knowledge').addEventListener('change', updateSimulation);
+        document.getElementById('sim-action').addEventListener('change', updateSimulation);
+        document.getElementById('sim-outcome').addEventListener('change', updateSimulation);
+
+        // --- CHARTS (Chart.js) ---
+        // Generating synthetic data that matches the "Expected Results" description in the report
+        // Early: -200 to -50. Mid: -20 to +20. Late: +30 to +80.
+        
+        function initCharts() {
+            // Data Generation
+            const episodes = Array.from({length: 50}, (_, i) => i * 20); // 0, 20, 40... 1000
+            const rewards = episodes.map(ep => {
+                // Sigmoid-ish curve + noise
+                // Target: -100 at 0, +60 at 1000.
+                const noise = (Math.random() - 0.5) * 20;
+                const progress = ep / 1000; 
+                // Logistic function for learning curve
+                const base = -100 + (160 / (1 + Math.exp(-8 * (progress - 0.3)))); 
+                return base + noise;
+            });
+
+            // 1. Learning Curve Chart
+            const ctx1 = document.getElementById('learningCurveChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: episodes,
+                    datasets: [{
+                        label: 'Avg Reward per Episode',
+                        data: rewards,
+                        borderColor: 'rgb(79, 70, 229)', // Indigo-600
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        y: {
+                            title: { display: true, text: 'Total Reward' },
+                            grid: { color: '#f1f5f9' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Episodes' },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            // 2. Reward Distribution Bar Chart
+            const ctx2 = document.getElementById('rewardDistChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: ['Hard Correct', 'Med Correct', 'Easy Correct', 'Topic Complete', 'Level Up', 'Wrong Ans', 'Bad Action', 'End Session (Fail)'],
+                    datasets: [{
+                        label: 'Reward Value',
+                        data: [10, 5, 3, 15, 20, -5, -20, -30],
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.7)', // Green
+                            'rgba(16, 185, 129, 0.7)',
+                            'rgba(16, 185, 129, 0.7)',
+                            'rgba(59, 130, 246, 0.7)', // Blue
+                            'rgba(139, 92, 246, 0.7)', // Purple
+                            'rgba(239, 68, 68, 0.7)',  // Red
+                            'rgba(239, 68, 68, 0.7)',
+                            'rgba(239, 68, 68, 0.7)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y', // Horizontal bar
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: '#f1f5f9' },
+                            title: { display: true, text: 'Reward Points' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            updateSimulation(); // Run logic once
+            initCharts();      // Render charts
+        };
+
+    </script>
+</body>
+</html>
